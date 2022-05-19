@@ -23,6 +23,8 @@ jobs:
           dotnet-version: |
             5.0.*
           source-url: "https://nuget.pkg.github.com/dodopizza/index.json"
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Nuget packages
         run: dotnet build src/allure-nunit/ --configuration Release
