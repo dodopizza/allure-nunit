@@ -1,0 +1,44 @@
+name: Publish
+
+on:
+  push:
+
+jobs:
+  build-and-publish:
+    name: Build and Publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: |
+            5.0.*
+          source-url: "https://nuget.pkg.github.com/dodopizza/index.json"
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
+
+      - name: Build Nuget packages
+        run: dotnet build src/allure-nunit/ --configuration Release
+
+      - name: Pack Nuget packages
+        run: >
+          dotnet pack src/allure-nunit/
+          --no-build
+          --configuration Release
+          --output output/packages
+
+      - name: Publish Nuget packages
+        run: >
+          dotnet nuget push output/packages/*.nupkg
+          --source "https://nuget.pkg.github.com/dodopizza/index.json"
+          --api-key ${{ secrets.GITHUB_TOKEN }} 
+          --skip-duplicate
