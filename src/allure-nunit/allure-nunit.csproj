@@ -7,6 +7,7 @@
     <Authors>Nick Chursin</Authors>
     <Description>NUnit attributes extenstions for Allure</Description>
     <PackageProjectUrl>https://github.com/dodopizza/allure-nunit</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/dodopizza/allure-nunit</RepositoryUrl>
     <PackageTags>nunit allure</PackageTags>
     <PackageIcon>logo.png</PackageIcon>
     <SignAssembly>False</SignAssembly>
