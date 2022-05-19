@@ -6,19 +6,15 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>Nick Chursin</Authors>
     <Description>NUnit attributes extenstions for Allure</Description>
-    <PackageId>NUnit.Allure</PackageId>
-    <AssemblyName>NUnit.Allure</AssemblyName>
-    <RootNamespace>NUnit.Allure</RootNamespace>
-    <PackageProjectUrl>https://github.com/unickq/allure-nunit</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/unickq/allure-nunit</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/dodopizza/allure-nunit</PackageProjectUrl>
     <PackageTags>nunit allure</PackageTags>
-    <PackageReleaseNotes>AllureStep fix for null - #46, Screen Diff Wrapper - #47</PackageReleaseNotes>
-	  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>logo.png</PackageIcon>
+    <SignAssembly>False</SignAssembly>
+    <DelaySign>False</DelaySign>
+    <LangVersion>default</LangVersion>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
