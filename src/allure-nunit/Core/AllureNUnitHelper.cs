@@ -40,7 +40,7 @@ namespace NUnit.Allure.Core
 
         private static AllureLifecycle AllureLifecycle => AllureLifecycle.Instance;
 
-        private void StartTestContainer()
+        public TestResultContainer StartTestContainer()
         {
             var testFixture = GetTestFixture(_test);
             _containerGuid = string.Concat(Guid.NewGuid().ToString(), "-tc-", testFixture.Id);
@@ -50,11 +50,14 @@ namespace NUnit.Allure.Core
                 name = _test.FullName
             };
             AllureLifecycle.StartTestContainer(container);
+            
+            return container;
         }
 
         private void StartTestCase()
         {
             _testResultGuid = string.Concat(Guid.NewGuid().ToString(), "-tr-", _test.Id);
+            _test.Properties.Add("testResultId", _testResultGuid);
             var testResult = new TestResult
             {
                 uuid = _testResultGuid,
@@ -73,7 +76,7 @@ namespace NUnit.Allure.Core
             AllureLifecycle.StartTestCase(_containerGuid, testResult);
         }
 
-        private TestFixture GetTestFixture(ITest test)
+        public static TestFixture GetTestFixture(ITest test)
         {
             var currentTest = test;
             var isTestSuite = currentTest.IsSuite;
@@ -193,7 +196,7 @@ namespace NUnit.Allure.Core
             var testFixture = GetTestFixture(_test);
 
             var listSetups = new List<FixtureResult>();
-            listSetups.AddRange(BuildFixtureResults(NUnitHelpMethodType.OneTimeSetup, testFixture));
+            // listSetups.AddRange(BuildFixtureResults(NUnitHelpMethodType.OneTimeSetup, testFixture));
             listSetups.AddRange(BuildFixtureResults(NUnitHelpMethodType.SetUp, testFixture));
 
             var listTearDowns = new List<FixtureResult>();
@@ -225,8 +228,8 @@ namespace NUnit.Allure.Core
                         }
                     });
 
-                StopTestCase();
 
+                StopTestCase();
                 StopTestContainer(listSetups, listTearDowns);
             }
             catch (ArgumentNullException e)
@@ -249,8 +252,10 @@ namespace NUnit.Allure.Core
                     // ReSharper disable once AccessToModifiedClosure                   
                     value = _test.Arguments[i] == null ? "NULL" : _test.Arguments[i].ToString()
                 }));
-            }
 
+
+            }
+            
             AllureLifecycle.UpdateTestCase(x => x.statusDetails = new StatusDetails
             {
                 message = string.IsNullOrWhiteSpace(TestContext.CurrentContext.Result.Message)
@@ -274,13 +279,76 @@ namespace NUnit.Allure.Core
             AllureLifecycle.WriteTestContainer(_containerGuid);
         }
 
-        public void StartAll(bool isWrappedIntoStep)
+        public void StartAll2(bool isWrappedIntoStep)
         {
-            StartTestContainer();
+            var testFixture = GetTestFixture(TestExecutionContext.CurrentContext.CurrentTest);
+            TestResult fixtureResult = null;
+
+            if (!_test.IsSuite)
+            {
+                var testResultId = testFixture.Properties.Get("testResultId")?.ToString();
+                Console.WriteLine(testResultId);
+                AllureLifecycle.Instance.UpdateTestCase(testResultId, fr => { fixtureResult = fr; });
+            }
+            
+            var testResultContainer = StartTestContainer();
+            
+            if (fixtureResult != null)
+            {
+                AllureLifecycle.UpdateTestContainer(testResultContainer.uuid, container =>
+                {
+                    container.befores.Add(new FixtureResult()
+                    {
+                        name = fixtureResult.name,
+                        status = fixtureResult.status,
+                        steps = fixtureResult.steps.SelectMany(t => t.steps).ToList(),
+                        attachments = fixtureResult.steps.SelectMany(st => st.attachments).ToList()
+                    });
+                });
+
+            }
+            //
+            // AllureLifecycle.Instance.StartBeforeFixture(testResultContainer.uuid, Guid.NewGuid().ToString(),
+            //     new FixtureResult());
             StartTestCase();
+            
             if (isWrappedIntoStep) StartTestStep();
         }
+        
+        public void StartAll(bool isWrappedIntoStep)
+        {
+            var testFixture = GetTestFixture(TestExecutionContext.CurrentContext.CurrentTest);
+            TestResult fixtureResult = null;
 
+            if (!_test.IsSuite)
+            {
+                var testResultId = testFixture.Properties.Get("testResultId")?.ToString();
+                Console.WriteLine(testResultId);
+                AllureLifecycle.Instance.UpdateTestCase(testResultId, fr => { fixtureResult = fr; });
+            }
+            
+            var testResultContainer = StartTestContainer();
+            
+            if (fixtureResult != null)
+            {
+                AllureLifecycle.UpdateTestContainer(testResultContainer.uuid, container =>
+                {
+                    container.befores.Add(new FixtureResult()
+                    {
+                        name = fixtureResult.name,
+                        status = fixtureResult.status,
+                        steps = fixtureResult.steps.SelectMany(t => t.steps).ToList(),
+                        attachments = fixtureResult.steps.SelectMany(st => st.attachments).ToList()
+                    });
+                });
+
+            }
+
+            StartTestCase();
+            
+            if (isWrappedIntoStep) StartTestStep();
+        }
+        
         public static Status GetNUnitStatus()
         {
             var result = TestContext.CurrentContext.Result;
@@ -321,8 +389,7 @@ namespace NUnit.Allure.Core
 
             return Status.passed;
         }
-
-
+        
         private void UpdateTestDataFromAttributes()
         {
             foreach (var p in GetTestProperties(PropertyNames.Description))
