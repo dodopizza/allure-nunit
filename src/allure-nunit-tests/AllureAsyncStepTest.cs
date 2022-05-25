@@ -14,7 +14,7 @@ namespace allure_nunit_tests
 		public async Task SimpleAsyncStepTest()
 		{
 			await AllureStepsAsyncExamples.AsyncStepWithAttribute();
-			await AllureLifecycle.Instance.WrapInStep(async () => await AllureStepsAsyncExamples.AsyncMethod("Step 2"));
+			await AllureLifecycle.Instance.WrapInStepAsync(async () => await AllureStepsAsyncExamples.AsyncMethod("Step 2"));
 			await AllureStepsAsyncExamples.AsyncStepWithAttribute();
 		}
 	}

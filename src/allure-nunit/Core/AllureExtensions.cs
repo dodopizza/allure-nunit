@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using Allure.Commons;
 using NUnit.Framework.Internal;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace NUnit.Allure.Core
 {
@@ -113,7 +114,33 @@ namespace NUnit.Allure.Core
             }
         }
 
-
+        public static async Task<T> WrapInStepAsync<T>(this AllureLifecycle lifecycle, Func<Task<T>> func, string stepName = "", [CallerMemberName] string callerName = "")
+        {
+            if (string.IsNullOrEmpty(stepName)) stepName = callerName;
+            var id = Guid.NewGuid().ToString();
+            var stepResult = new StepResult {name = stepName};
+            try
+            {
+                lifecycle.StartStep(id, stepResult);
+                var result = await func.Invoke();
+                lifecycle.StopStep(step => stepResult.status = Status.passed);
+                return result;
+            }
+            catch (Exception e)
+            {
+                lifecycle.StopStep(step =>
+                {
+                    step.statusDetails = new StatusDetails
+                    {
+                        message = e.Message,
+                        trace = e.StackTrace
+                    };
+                    step.status = AllureNUnitHelper.GetNUnitStatus();
+                });
+                throw;
+            }
+        }
+        
         /// <summary>
         /// AllureNUnit AddScreenDiff wrapper method.
         /// </summary>

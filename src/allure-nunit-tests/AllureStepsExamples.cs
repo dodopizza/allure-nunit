@@ -8,13 +8,13 @@ namespace allure_nunit_tests
 		[AllureStep]
 		public static void Step1()
 		{
-			Console.WriteLine("1");
+			Console.WriteLine(nameof(Step1));
 		}
 
 		[AllureStep("Step 3 - with explicit name")]
 		public static void Step3()
 		{
-			Console.WriteLine("3");
+			Console.WriteLine(nameof(Step3));
 		}
 
 		[AllureStep("Step with params #{0} and #{1}")]

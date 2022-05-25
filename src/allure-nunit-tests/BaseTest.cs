@@ -1,5 +1,4 @@
-﻿using Allure.Commons;
-using NUnit.Allure.Attributes;
+﻿using NUnit.Allure.Attributes;
 using NUnit.Allure.Core;
 using NUnit.Framework;
 
@@ -12,8 +11,7 @@ namespace allure_nunit_tests
         [OneTimeSetUp]
         public void CleanupResultDirectory()
         {
-            AllureExtensions.WrapSetUpTearDownParams(() => { AllureLifecycle.Instance.CleanupResultDirectory(); },
-                "Clear Allure Results Directory");
+
         }
     }
 }

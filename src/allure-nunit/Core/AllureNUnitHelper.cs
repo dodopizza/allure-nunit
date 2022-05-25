@@ -287,7 +287,6 @@ namespace NUnit.Allure.Core
             if (!_test.IsSuite)
             {
                 var testResultId = testFixture.Properties.Get("testResultId")?.ToString();
-                Console.WriteLine(testResultId);
                 AllureLifecycle.Instance.UpdateTestCase(testResultId, fr => { fixtureResult = fr; });
             }
             
@@ -323,7 +322,6 @@ namespace NUnit.Allure.Core
             if (!_test.IsSuite)
             {
                 var testResultId = testFixture.Properties.Get("testResultId")?.ToString();
-                Console.WriteLine(testResultId);
                 AllureLifecycle.Instance.UpdateTestCase(testResultId, fr => { fixtureResult = fr; });
             }
             
