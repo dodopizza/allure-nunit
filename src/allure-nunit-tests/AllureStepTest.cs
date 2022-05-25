@@ -6,29 +6,6 @@ using NUnit.Framework;
 
 namespace allure_nunit_tests
 {
-    public static class StepsExamples
-    {
-        [AllureStep]
-        public static void Step1()
-        {
-            Console.WriteLine("1");
-        }
-
-
-        [AllureStep("Step 3 - with explicit name")]
-        public static void Step3()
-        {
-            Console.WriteLine("3");
-        }
-
-        [AllureStep("Step with params #{0} and #{1}")]
-        public static void StepWithParams(object firstParam, object lastParam)
-        {
-            Console.WriteLine(firstParam);
-            Console.WriteLine(lastParam);
-        }
-    }
-
     [AllureSuite("Tests - Steps")]
     public class AllureStepTest : BaseTest
     {
@@ -36,9 +13,9 @@ namespace allure_nunit_tests
         [AllureName("Simple test with steps")]
         public void SimpleStepTest()
         {
-            StepsExamples.Step1();
+            AllureStepsExamples.Step1();
             AllureLifecycle.Instance.WrapInStep(() => { Console.WriteLine("Step 2"); }, "Step2");
-            StepsExamples.Step3();
+            AllureStepsExamples.Step3();
         }
 
         [Test]
@@ -47,7 +24,7 @@ namespace allure_nunit_tests
         {
             AllureLifecycle.Instance.WrapInStep(() =>
             {
-                StepsExamples.Step1();
+                AllureStepsExamples.Step1();
 
                 AllureLifecycle.Instance.WrapInStep(() =>
                 {
@@ -56,7 +33,7 @@ namespace allure_nunit_tests
                         "Step in Step 2");
                 }, "Step2");
 
-                StepsExamples.Step3();
+                AllureStepsExamples.Step3();
             }, "RootStep");
         }
 
@@ -66,9 +43,9 @@ namespace allure_nunit_tests
         [AllureName("Test with parametrized steps")]
         public void SimpleStepTest2()
         {
-            StepsExamples.StepWithParams("0", "1");
-            StepsExamples.StepWithParams(1, 2);
-            StepsExamples.StepWithParams(new[] { 1, 3, 5}, "array");
+            AllureStepsExamples.StepWithParams("0", "1");
+            AllureStepsExamples.StepWithParams(1, 2);
+            AllureStepsExamples.StepWithParams(new[] { 1, 3, 5}, "array");
         }
     }
 }
