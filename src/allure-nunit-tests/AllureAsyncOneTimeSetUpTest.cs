@@ -4,22 +4,15 @@ using NUnit.Framework;
 
 namespace allure_nunit_tests
 {
-	[AllureSuite("Tests: Async OneTime SetUp")]
+	[AllureSuite("Tests - Async OneTime SetUp")]
 	[Parallelizable(ParallelScope.All)]
 	public class AllureAsyncOneTimeSetUpTest: BaseTest
 	{
 		[OneTimeSetUp]
-		public async Task OneTimeSetUp1()
+		public async Task OneTimeSetUp()
 		{
 			await AllureStepsAsyncExamples.AsyncStepWithAttribute();
-			await AllureStepsAsyncExamples.AsyncWrappedStep1();
-			await AllureStepsAsyncExamples.AsyncWrappedStep2();
-		}
-
-		[SetUp]
-		public void SetUp1()
-		{
-			AllureStepsExamples.Step1();
+			await AllureStepsAsyncExamples.AsyncWrappedStep();
 		}
 
 		[Test]
@@ -32,20 +25,9 @@ namespace allure_nunit_tests
 
 		[Test]
 		[AllureName("Test2")]
-		public async Task Test2()
+		public void Test2()
 		{
-			await AllureStepsAsyncExamples.AsyncStepWithAttribute();
-			await AllureStepsAsyncExamples.AsyncWrappedStep();
-		}
-		
-		[Test]
-		[AllureName("Test3")]
-		public async Task Test3()
-		{
-			await AllureStepsAsyncExamples.AsyncStepWithAttribute();
-			await AllureStepsAsyncExamples.AsyncWrappedStep();
-			await AllureStepsAsyncExamples.AsyncStepWithAttribute();
-			await AllureStepsAsyncExamples.AsyncWrappedStep();
+			AllureStepsExamples.Step1();
 		}
 	}
 }
