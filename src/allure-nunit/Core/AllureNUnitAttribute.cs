@@ -37,6 +37,7 @@ namespace NUnit.Allure.Core
             if (test.IsSuite)
             {
                 _allureNUnitHelper.Value ??= new AllureNUnitHelper(test);
+                _allureNUnitHelper.Value.StopRootContainer();
             }
             else
             {

@@ -45,10 +45,9 @@ namespace NUnit.Allure.Core
 
         private static AllureLifecycle AllureLifecycle => AllureLifecycle.Instance;
 
-        public TestResultContainer StartTestContainer()
+        private TestResultContainer StartTestContainer(string containerGuid)
         {
-            var testFixture = GetTestFixture(_test);
-            _containerGuid = string.Concat(Guid.NewGuid().ToString(), "-tc-", testFixture.Id);
+            _containerGuid = containerGuid;
             var container = new TestResultContainer
             {
                 uuid = _containerGuid,
@@ -62,7 +61,6 @@ namespace NUnit.Allure.Core
         private void StartTestCase()
         {
             _testResultGuid = string.Concat(Guid.NewGuid().ToString(), "-tr-", _test.Id);
-            _test.Properties.Add("testResultId", _testResultGuid);
             var testResult = new TestResult
             {
                 uuid = _testResultGuid,
@@ -235,7 +233,7 @@ namespace NUnit.Allure.Core
 
 
                 StopTestCase();
-                StopTestContainer(listSetups, listTearDowns);
+                StopTestContainer(GetCurrentTestContainerId(), listSetups, listTearDowns);
             }
             catch (ArgumentNullException e)
             {
@@ -284,22 +282,27 @@ namespace NUnit.Allure.Core
             AllureLifecycle.WriteTestCase(_testResultGuid);
         }
 
-        private void StopTestContainer(List<FixtureResult> listSetups, List<FixtureResult> listTearDowns)
+        private void StopTestContainer(string containerGuid, List<FixtureResult> listSetups = null, List<FixtureResult> listTearDowns = null)
         {
-            AllureLifecycle.UpdateTestContainer(_containerGuid, cont =>
+            AllureLifecycle.UpdateTestContainer(containerGuid, cont =>
             {
-                cont.befores.AddRange(listSetups);
-                cont.afters.AddRange(listTearDowns);
+                cont.befores.AddRange(listSetups ?? new List<FixtureResult>());
+                cont.afters.AddRange(listTearDowns ?? new List<FixtureResult>());
             });
-            AllureLifecycle.StopTestContainer(_containerGuid);
-            AllureLifecycle.WriteTestContainer(_containerGuid);
+            AllureLifecycle.StopTestContainer(containerGuid);
+            AllureLifecycle.WriteTestContainer(containerGuid);
         }
 
+        public void StopRootContainer()
+        {
+            StopTestContainer(GetRootContainerId());
+        }
+        
         public void StartFixture()
         {
-            var testResultContainer = StartTestContainer();
+            var testResultContainer = StartTestContainer(GetRootContainerId());
+
             _testResultGuid = string.Concat(Guid.NewGuid().ToString(), "-fr-", _test.Id);
-            _test.Properties.Add("testResultId", _testResultGuid);
             AllureLifecycle.StartBeforeFixture(testResultContainer.uuid, _testResultGuid,
                 new FixtureResult());
         }
@@ -314,7 +317,7 @@ namespace NUnit.Allure.Core
                 fixtureResult = testFixture.Properties.Get("OneTimeSetUpResult") as FixtureResult;
             }
             
-            var testResultContainer = StartTestContainer();
+            var testResultContainer = StartTestContainer(GetCurrentTestContainerId());
             
             if (fixtureResult != null)
             {
@@ -433,6 +436,12 @@ namespace NUnit.Allure.Core
             return list;
         }
 
+        private string GetContainerId(ITest testOrFixture) => $"tc-{testOrFixture.Id}";
+        
+        private string GetCurrentTestContainerId() => GetContainerId(TestExecutionContext.CurrentContext.CurrentTest);
+        
+        private string GetRootContainerId() => GetContainerId(GetTestFixture(TestExecutionContext.CurrentContext.CurrentTest));
+        
         [Obsolete("Use extension method AllureLifecycle.WrapInStep")]
         public void WrapInStep(Action action, string stepName = "")
         {
