@@ -16,11 +16,11 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <PackageVersion>3.6.2-dodo</PackageVersion>
+    <PackageVersion>3.6.3-dodo</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Allure.Commons" Version="3.6.2-dodo" />
+    <PackageReference Include="Allure.Commons" Version="3.6.3-dodo" />
     <PackageReference Include="AspectInjector" Version="2.6.0" />
     <PackageReference Include="NUnit" Version="3.13.2" />
   </ItemGroup>
