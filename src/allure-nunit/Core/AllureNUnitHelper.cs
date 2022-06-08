@@ -249,7 +249,6 @@ namespace NUnit.Allure.Core
             try
             {
                 AllureLifecycle.StopFixture(_ => { });
-                StopTestContainer(new List<FixtureResult>(), new List<FixtureResult>());
             }
             catch (ArgumentNullException e)
             {
@@ -312,8 +311,7 @@ namespace NUnit.Allure.Core
 
             if (!_test.IsSuite)
             {
-                var testResultId = testFixture.Properties.Get("testResultId")?.ToString();
-                AllureLifecycle.UpdateFixture(testResultId, fr => { fixtureResult = fr; });
+                fixtureResult = testFixture.Properties.Get("OneTimeSetUpResult") as FixtureResult;
             }
             
             var testResultContainer = StartTestContainer();
@@ -334,22 +332,27 @@ namespace NUnit.Allure.Core
         public void UpdateOneTimeFixture()
         {
             var currentResult = TestExecutionContext.CurrentContext.CurrentResult;
-
+            var testFixture = GetTestFixture(TestExecutionContext.CurrentContext.CurrentTest);
+            
             if (!string.IsNullOrEmpty(currentResult.Output))
             {
                 AllureLifecycle.Instance.AddAttachment("Console Output", "text/plain",
                     Encoding.UTF8.GetBytes(currentResult.Output), ".txt");    
             }
 
-            var testResult = new TestResult();
-            AllureLifecycle.Instance.UpdateFixture(fixtureResult =>
+            FixtureResult fixtureResult = null;
+            AllureLifecycle.Instance.UpdateFixture(fr =>
             {
-                fixtureResult.name = "OneTimeSetUp";
-                fixtureResult.status = testResult.steps.SelectMany(s => s.steps)
+                fr.name = "OneTimeSetUp";
+                fr.status = fr.steps.SelectMany(s => s.steps)
                     .All(s => s.status == Status.passed)
                     ? Status.passed
                     : Status.failed;
+
+                fixtureResult = fr;
             });
+            
+            testFixture.Properties.Set("OneTimeSetUpResult", fixtureResult);
         }
         
         public static Status GetNUnitStatus()

@@ -24,6 +24,7 @@ namespace NUnit.Allure.Core
             if (test.IsSuite)
             {
                 _allureNUnitHelper.Value.UpdateOneTimeFixture();
+                _allureNUnitHelper.Value.StopFixture();
             }
             else
             {
@@ -36,7 +37,6 @@ namespace NUnit.Allure.Core
             if (test.IsSuite)
             {
                 _allureNUnitHelper.Value ??= new AllureNUnitHelper(test);
-                _allureNUnitHelper.Value.StopFixture();
             }
             else
             {
