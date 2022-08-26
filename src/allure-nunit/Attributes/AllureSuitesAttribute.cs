@@ -6,13 +6,10 @@ namespace NUnit.Allure.Attributes
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
 	public class AllureSuitesAttribute : AllureTestCaseAttribute
 	{
-		public AllureSuitesAttribute(params string[] suites) : this("Suite", suites)
-		{ }
-
-		public AllureSuitesAttribute(string prefix, params string[] suites)
+		public AllureSuitesAttribute(params string[] suites)
 		{
 			Suites = suites;
-			Prefix = prefix;
+			Prefix = "Suite";
 		}
 		
 		private string[] Suites { get; }
