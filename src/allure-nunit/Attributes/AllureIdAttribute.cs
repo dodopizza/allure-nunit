@@ -1,20 +1,21 @@
 ﻿using System;
 using Allure.Commons;
 
-namespace NUnit.Allure.Attributes;
-
-[AttributeUsage(AttributeTargets.Method)]
-public class AllureIdAttribute : AllureTestCaseAttribute
+namespace NUnit.Allure.Attributes
 {
-    public AllureIdAttribute(string id)
+    [AttributeUsage(AttributeTargets.Method)]
+    public class AllureIdAttribute : AllureTestCaseAttribute
     {
-        Id = id;
-    }
+        public AllureIdAttribute(string id)
+        {
+            Id = id;
+        }
 
-    private string Id { get; }
+        private string Id { get; }
 
-    public override void UpdateTestResult(TestResult testResult)
-    {
-        testResult.labels.Add(new Label{ name = "AS_ID", value = Id });
+        public override void UpdateTestResult(TestResult testResult)
+        {
+            testResult.labels.Add(new Label{ name = "AS_ID", value = Id });
+        }
     }
 }
