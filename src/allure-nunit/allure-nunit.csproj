@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <Version>3.7.2-dodo</Version>
+    <Version>3.7.3-dodo</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>Nick Chursin</Authors>
     <Description>NUnit attributes extenstions for Allure</Description>
@@ -16,7 +16,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <PackageVersion>3.7.2-dodo</PackageVersion>
+    <PackageVersion>3.7.3-dodo</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
