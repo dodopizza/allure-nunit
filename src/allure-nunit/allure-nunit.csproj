@@ -16,7 +16,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <PackageVersion>3.7.4-dodo</PackageVersion>
+    <PackageVersion>3.7.5-preview-dodo</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
